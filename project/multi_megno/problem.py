@@ -23,7 +23,7 @@ def simulation(par):
     sim = rebound.Simulation() 
     sim.integrator = "whfast"
     sim.min_dt = 0.05
-    sim.dt = 10
+    sim.dt = 1
     sim.G = 1.4880826e-34 #Units of AU^3/kg/day^2
     ss_pos = np.array([[-3.013424684820004E-03 , 7.577400311699641E-03 , 1.522327948994377E-06],
                      [-1.744888637875314E-01 ,-4.244459073219732E-01 ,-1.957052267164663E-02],
@@ -85,7 +85,7 @@ def simulation(par):
     # Hide warning messages (WHFast timestep too large)
     with warnings.catch_warnings(record=True) as w: 
         warnings.simplefilter("always")
-        sim.integrate(1E5)
+        sim.integrate(1E6)
 
     return [sim.calculate_megno(),1./(sim.calculate_lyapunov()*2.*np.pi)] # returns MEGNO and Lypunov timescale in years
 
