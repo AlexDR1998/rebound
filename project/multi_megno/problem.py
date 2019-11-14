@@ -93,7 +93,7 @@ def simulation(par):
 ### Setup grid and run many simulations in parallel
 # actual a=9.977049427315410E-01
 # actual e=5.147985107081943E-01
-N = 10                      # Grid size, increase this number to see more detail
+N = 100                      # Grid size, increase this number to see more detail
 a = np.linspace(0.97,0.98,N)   # range of cruithne semi-major axis in AU
 e = np.linspace(0.51,0.52,N)   # range of cruithne eccentricity
 #a = np.linspace(0.8,1.2,N)
