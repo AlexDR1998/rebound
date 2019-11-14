@@ -7,9 +7,9 @@
 
 # Import matplotlib
 import numpy as np
-import matplotlib; matplotlib.use("pdf")
-import matplotlib.pyplot as plt
-from matplotlib.colors import LogNorm
+#import matplotlib; matplotlib.use("pdf")
+#import matplotlib.pyplot as plt
+#from matplotlib.colors import LogNorm
  
 # Import the rebound module
 import rebound
@@ -93,7 +93,7 @@ def simulation(par):
 ### Setup grid and run many simulations in parallel
 # actual a=9.977049427315410E-01
 # actual e=5.147985107081943E-01
-N = 20                      # Grid size, increase this number to see more detail
+N = 10                      # Grid size, increase this number to see more detail
 a = np.linspace(0.97,0.98,N)   # range of cruithne semi-major axis in AU
 e = np.linspace(0.51,0.52,N)   # range of cruithne eccentricity
 #a = np.linspace(0.8,1.2,N)
@@ -110,13 +110,30 @@ t1 = time.time()
 pool = rebound.InterruptiblePool()    # Number of threads default to the number of CPUs on the system
 print("Running %d simulations on %d threads..." % (len(parameters), pool._processes))
 res = np.nan_to_num(np.array(pool.map(simulation,parameters))) 
-megno = np.clip(res[:,0].reshape((N,N)),1.8,4.)             # clip arrays to plot saturated 
-lyaptimescale = np.clip(np.absolute(res[:,1].reshape((N,N))),1e1,1e5)
+#megno = np.clip(res[:,0].reshape((N,N)),1.8,4.)             # clip arrays to plot saturated 
+#lyaptimescale = np.clip(np.absolute(res[:,1].reshape((N,N))),1e1,1e5)
+
+megno = res[:,0].reshape((N,N))             
+lyaptimescale = np.absolute(res[:,1].reshape((N,N)))
 t2 = time.time()
 print("Time taken: "+str(t2-t1))
+np.save("megno",megno,allow_pickle=False)
+np.save("lyaptimescale",lyaptimescale,allow_pickle=False)
+
+
+
+
+
+
+
+
+
+
+
 ### Create plot and save as pdf 
 
 # Setup plots
+"""
 f, axarr = plt.subplots(2,figsize=(10,10))
 extent = [a.min(), a.max(), e.min(), e.max()]
 for ax in axarr:
@@ -124,7 +141,6 @@ for ax in axarr:
     ax.set_ylim(extent[2],extent[3])
     ax.set_xlabel("$a_{\mathrm{Cruithne}}$ [AU]")
     ax.set_ylabel("$e_{\mathrm{Cruithne}}$")
-
 
 # Plot MEGNO 
 im1 = axarr[0].imshow(megno, vmin=1.8, vmax=4., aspect='auto', origin="lower", interpolation='nearest', cmap="RdYlGn_r", extent=extent)
@@ -145,3 +161,4 @@ from sys import platform as _platform
 if _platform == "darwin":
     import os
     os.system("open megno.pdf")
+"""
