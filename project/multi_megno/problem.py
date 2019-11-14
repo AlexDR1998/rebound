@@ -6,6 +6,7 @@
 # to regular quasi-periodic orbits. Higher values of <Y> correspond to chaotic orbits.
 
 # Import matplotlib
+import numpy as np
 import matplotlib; matplotlib.use("pdf")
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
@@ -13,7 +14,6 @@ from matplotlib.colors import LogNorm
 # Import the rebound module
 import rebound
 # Import other modules
-import numpy as np
 import multiprocessing
 import warnings
 import time
