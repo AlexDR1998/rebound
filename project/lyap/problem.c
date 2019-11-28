@@ -75,19 +75,19 @@ double tmax;
 int main(int argc, char* argv[]){
     struct reb_simulation* r = reb_create_simulation();
     // Setup constants
-    r->dt             = 0.1;                // in days
-    tmax            = 7.3e10;            // 200 Myr
+    r->dt             = 1;                // in days
+    tmax            = 1e7;//7.3e10;            // 200 Myr
     r->G            = 1.4880826e-34;        // in AU^3 / kg / day^2.
     
-    //r->integrator        = REB_INTEGRATOR_WHFAST;
-    //r->ri_whfast.safe_mode     = 0;        // Turn off safe mode. Need to call reb_integrator_synchronize() before outputs. 
-    //r->ri_whfast.corrector     = 11;        // 11th order symplectic corrector
+    r->integrator        = REB_INTEGRATOR_WHFAST;
+    r->ri_whfast.safe_mode     = 0;        // Turn off safe mode. Need to call reb_integrator_synchronize() before outputs. 
+    r->ri_whfast.corrector     = 17;        // 11th order symplectic corrector
     //r->integrator = REB_INTEGRATOR_JANUS;
     //r->ri_janus.order = 10;
     r->heartbeat        = heartbeat;
     r->exact_finish_time = 1; // Finish exactly at tmax in reb_integrate(). Default is already 1.
     //r->usleep = 10000;
-    r->integrator        = REB_INTEGRATOR_IAS15;        // Alternative non-symplectic integrator
+    //r->integrator        = REB_INTEGRATOR_IAS15;        // Alternative non-symplectic integrator
 
     // Initial conditions
     int planets[4] = {0,3,4,5};
@@ -105,15 +105,15 @@ int main(int argc, char* argv[]){
     reb_move_to_com(r);
     e_init = reb_tools_energy(r);
     system("rm -f xyz.txt");
-    system("rm -f lyap.txt");
-    system("rm -f megno.txt");
+    system("rm -f lyap_whfast_longer.txt");
+    system("rm -f megno_whfast_longer.txt");
     reb_tools_megno_init(r);
     reb_integrate(r, tmax);
 
 }
 
 void heartbeat(struct reb_simulation* r){
-    if (reb_output_check(r, 100.)){
+    if (reb_output_check(r, 10.)){
         reb_output_timing(r, tmax);
         reb_integrator_synchronize(r);
         //reb_serialize_particle_data(r,hash,mass,radius,xyz,vxvyvz,xyzvxvyvz);
@@ -134,11 +134,11 @@ void heartbeat(struct reb_simulation* r){
         lya = reb_tools_calculate_lyapunov(r);
         meg = reb_tools_calculate_megno(r);
 
-        FILE* l = fopen("lyap.txt","a");
+        FILE* l = fopen("lyap_whfast_longer.txt","a");
         fprintf(l,"%e\n",lya);
         fclose(l);
 
-        FILE* m = fopen("megno.txt","a");
+        FILE* m = fopen("megno_whfast_longer.txt","a");
         fprintf(m,"%e\n",meg);
         fclose(m);
         //printf("%f",r->particles[9].x-xyz[9][0]);

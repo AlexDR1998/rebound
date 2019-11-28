@@ -1,10 +1,9 @@
 #!/usr/bin/python
-# This example integrates Jupiter and Saturn in the Solar system for a variety of initial conditions.
-# Alongside the normal equations of motions, IAS15 is used to integrate the variational equations.
-# These can be used to measure the Mean Exponential Growth of Nearby Orbits (MEGNO), a chaos indicator.
-# This example script runs 12^2 simulations and plots the MEGNO value. Values close to <Y>=2 correspond 
-# to regular quasi-periodic orbits. Higher values of <Y> correspond to chaotic orbits.
 
+#Simulations half of python_examples/megno/problem.py
+#
+#
+#
 # Import matplotlib
 import numpy as np
 #import matplotlib; matplotlib.use("pdf")
@@ -21,7 +20,7 @@ import time
 def simulation(par):
     cruithne_a, cruithne_e = par
     sim = rebound.Simulation() 
-    sim.integrator = "whfast"
+    sim.integrator = "janus"
     sim.min_dt = 0.05
     sim.dt = 1
     sim.G = 1.4880826e-34 #Units of AU^3/kg/day^2
@@ -85,7 +84,7 @@ def simulation(par):
     # Hide warning messages (WHFast timestep too large)
     with warnings.catch_warnings(record=True) as w: 
         warnings.simplefilter("always")
-        sim.integrate(1E6)
+        sim.integrate(1E4)
 
     return [sim.calculate_megno(),1./(sim.calculate_lyapunov()*2.*np.pi)] # returns MEGNO and Lypunov timescale in years
 
@@ -93,7 +92,7 @@ def simulation(par):
 ### Setup grid and run many simulations in parallel
 # actual a=9.977049427315410E-01
 # actual e=5.147985107081943E-01
-N = 100                      # Grid size, increase this number to see more detail
+N = 10                      # Grid size, increase this number to see more detail
 a = np.linspace(0.97,0.98,N)   # range of cruithne semi-major axis in AU
 e = np.linspace(0.51,0.52,N)   # range of cruithne eccentricity
 #a = np.linspace(0.8,1.2,N)
@@ -117,8 +116,8 @@ megno = res[:,0].reshape((N,N))
 lyaptimescale = np.absolute(res[:,1].reshape((N,N)))
 t2 = time.time()
 print("Time taken: "+str(t2-t1))
-np.save("megno",megno,allow_pickle=False)
-np.save("lyaptimescale",lyaptimescale,allow_pickle=False)
+np.save("megno_janus",megno,allow_pickle=False)
+np.save("lyaptimescale_janus",lyaptimescale,allow_pickle=False)
 
 
 
